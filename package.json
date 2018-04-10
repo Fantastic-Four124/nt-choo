@@ -11,8 +11,11 @@
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
   "dependencies": {
+    "bootstrap": "^4.0.0",
     "choo": "^6.10.3",
     "choo-service-worker": "^2.4.0",
+    "js-cookie": "^2.2.0",
+    "moment": "^2.22.0",
     "sheetify": "^7.3.0",
     "tachyons": "^4.9.1"
   },

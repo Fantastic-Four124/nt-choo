@@ -1,0 +1,10 @@
+  <RoutingRules>
+    <RoutingRule>
+    <Condition>
+       <KeyPrefixEquals>loaderio-3b056402732ea6eb99f1e34f47c2ace1.txt</KeyPrefixEquals>
+    </Condition>
+    <Redirect>
+      <ReplaceKeyWith>public/loaderio-3b056402732ea6eb99f1e34f47c2ace1.txt</ReplaceKeyWith>
+    </Redirect>
+    </RoutingRule>
+  </RoutingRules>
