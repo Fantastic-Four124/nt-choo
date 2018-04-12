@@ -1,8 +1,9 @@
 const moment = require('moment')
 
 //const SERVICE_URL = 'https://serene-mountain-37189.herokuapp.com'
-const SERVICE_URL = 'http://localhost:4567'
+//const SERVICE_URL = 'http://localhost:4567'
 //const FOLLOW_SERVICE_URL = 'https://fierce-garden-41263.herokuapp.com'
+const SERVICE_URL = 'https://boiling-castle-61613.herokuapp.com'
 const REGISTER = 'register'
 const RECENT = 'recent'
 const USERS = 'users'
