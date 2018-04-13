@@ -1,4 +1,5 @@
 const {getTimelineURL, getFeedURL, getPostTweetURL, getRecentTweetsURL} = require('../util')
+const $ = require('jquery')
 
 module.exports = function feedStore (state, emitter) {
   state.tweets = null
@@ -32,7 +33,42 @@ module.exports = function feedStore (state, emitter) {
     .then(tweets => {
       state.tweets = tweets
       emitter.emit('render')
+      //     state.renderHashtags()
     })}).catch(err => console.log('oh no!'))
+  }
+
+  state.renderHashtags = () => {
+    $(document).ready(() => {
+      $('.content').each(function() {
+        const me = $(this)
+        console.log('me', me)
+        let txt = me.html()
+        var re = [
+          "\\b((?:https?|ftp)://[^\\s\"'<>]+)\\b",
+          "\\b(www\\.[^\\s\"'<>]+)\\b",
+          "\\b(\\w[\\w.+-]*@[\\w.-]+\\.[a-z]{2,6})\\b", 
+          "#([a-z0-9]+)"];
+        re = new RegExp(re.join('|'), "gi");
+        ///(#([a-z0-9]+))(?!.*?<\/a>)/gi, '<a href="''">$1</a>');
+
+        //txt = txt.replace(/(#([a-z0-9]+)), '<a href="''">$1</a>');
+
+        txt = txt.replace(re, (match, url, www, mail, hashtag) => {
+          if(url)
+            return "<a href=\"" + url + "\">" + url + "</a>";
+          if(www)
+            return "<a href=\"http://" + www + "\">" + www + "</a>";
+          if(mail)
+            return "<a href=\"mailto:" + mail + "\">" + mail + "</a>"
+          if(hashtag)
+            console.log('hashtag found', hashtag)
+            return '<a href="http://' + hashtag + '">' + hashtag + '</a>'
+          return match;
+        })
+        console.log('txt', txt)
+        me.html(txt);
+      })
+    })
   }
 
   state.loadTweets = () => {
@@ -43,7 +79,9 @@ module.exports = function feedStore (state, emitter) {
     .then(tweets => {
       state.tweets = tweets
       console.log('tweets', tweets)
+      //  state.renderHashtags()
       emitter.emit('render')
+      // state.renderHashtags()
     })}).catch(err => console.log('oh no!'))
   }
 

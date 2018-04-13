@@ -4,6 +4,8 @@ const moment = require('moment')
 //const SERVICE_URL = 'http://localhost:4567'
 //const FOLLOW_SERVICE_URL = 'https://fierce-garden-41263.herokuapp.com'
 const SERVICE_URL = 'https://boiling-castle-61613.herokuapp.com'
+const USER_SERVICE_URL = 'https://nanotwitter-userservice.herokuapp.com/'
+
 const REGISTER = 'register'
 const RECENT = 'recent'
 const USERS = 'users'
@@ -50,15 +52,15 @@ exports.isFollowing = (mainUser, otherUser) => {
 }
 
 exports.getRegisterURL = () => {
-  return SERVICE_URL + '/' + PREFIX + '/' + USERS + '/' + REGISTER
+  return USER_SERVICE_URL + '/' + PREFIX + '/' + USERS + '/' + REGISTER
 }
 
 exports.getLoginURL = () => {
-  return SERVICE_URL + '/' + PREFIX + '/' + LOGIN
+  return USER_SERVICE_URL + '/' + PREFIX + '/' + LOGIN
 }
 
 exports.getLoadUserURL = (id, token) => {
-  return SERVICE_URL + '/' + PREFIX + '/' + token + '/' + USERS + '/' + id
+  return USER_SERVICE_URL + '/' + PREFIX + '/' + token + '/' + USERS + '/' + id
 }
 
 exports.getTimelineURL = (id, token) => {

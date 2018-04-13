@@ -26,6 +26,7 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
+      console.log('resObj in register', resObj)
       if (resObj.err) {
         state.databaseError = true
         emitter.emit('render')
@@ -52,6 +53,7 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
+      console.log('resObj in login', resObj)
       if (resObj.err) {
         state.invalidLogin = true
         emitter.emit('render')

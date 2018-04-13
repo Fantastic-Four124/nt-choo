@@ -20,8 +20,8 @@ module.exports = function renderProfile (state, emit, tweet) {
     return html`
       <div class="profile position-fixed" id="profile-<%= @curr_user.id %>">
         <p>User: ${state.currUser.username} </p>
-        <p>Leaders: <a href="/users/${state.currUser.id}/leaders">${state.currUser.leaders.length}</a></p>
-        <p>Followers: <a href="/users/${state.currUser.id}/followers">${state.currUser.followers.length}</a></p>
+        <p>Leaders: <a href="/users/${state.currUser.id}/leaders">${state.currUser.number_of_leaders}</a></p>
+        <p>Followers: <a href="/users/${state.currUser.id}/followers">${state.currUser.number_of_followers}</a></p>
         <p><a href="/">Your Timeline</a></p>
         <p><a href="/users/${state.mainUser.id}">Your Feed</a></p>
         <p><a href="/alltweets">All Recent Tweets</a></p>
@@ -32,8 +32,11 @@ module.exports = function renderProfile (state, emit, tweet) {
   return html`
     <div class="profile position-fixed" id="profile-${state.currUser.id}>">
       <p>User: ${state.currUser.username} </p>
-      <p>Leaders: <a href="/users/${state.currUser.id}/leaders">${state.currUser.leaders.length}</a></p>
-      <p>Followers: <a href="/users/${state.currUser.id}/followers">${state.currUser.followers.length}</a></p>
+      <p>Leaders: <a href="/users/${state.currUser.id}/leaders">${state.currUser.number_of_leaders}</a></p>
+      <p>Followers: <a href="/users/${state.currUser.id}/followers">${state.currUser.number_of_followers}</a></p>
+        <p><a href="/">Your Timeline</a></p>
+        <p><a href="/users/${state.mainUser.id}">Your Feed</a></p>
+        <p><a href="/alltweets">All Recent Tweets</a></p>
       <p><a href="/users/${state.currUser.id}/timeline">Timeline</a></p>
       ${renderFollowButton()}
     </div>

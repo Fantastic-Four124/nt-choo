@@ -1,7 +1,7 @@
 {
-  "name": "test",
-  "short_name": "test",
-  "description": "testing choo",
+  "name": "nanotwitter",
+  "short_name": "nanotwitter",
+  "description": "nanotwitter",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000",
