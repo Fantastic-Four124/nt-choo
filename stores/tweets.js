@@ -13,6 +13,7 @@ module.exports = function feedStore (state, emitter) {
   })
 
   state.loadAllTweets = () => {
+    console.log('state in loadall', state)
     if (!state.appLoaded) {
       emitter.on('DOMContentLoaded', () => {
         state.appLoaded = true

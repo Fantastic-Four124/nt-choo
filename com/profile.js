@@ -24,6 +24,7 @@ module.exports = function renderProfile (state, emit, tweet) {
         <p>Followers: <a href="/users/${state.currUser.id}/followers">${state.currUser.followers.length}</a></p>
         <p><a href="/">Your Timeline</a></p>
         <p><a href="/users/${state.mainUser.id}">Your Feed</a></p>
+        <p><a href="/alltweets">All Recent Tweets</a></p>
       </div>
     `
   }

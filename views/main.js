@@ -19,7 +19,7 @@ module.exports = function main (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
   if (!state.currUser) state.loadUser()
   if (state.userLoaded && !state.tweets) {
-    if (!state.loggedIn) {
+    if (!state.loggedIn || state.href.indexOf('alltweets') !== -1) {
       state.loadAllTweets()
     } else {
       state.loadTweets()
@@ -31,9 +31,21 @@ module.exports = function main (state, emit) {
       <div class="main-container">
           ${renderNavbar(state, emit)}
         <div class="main-content feed-container">
+          ${flashDBError()}
           ${renderFeed(state, emit)}
         </div>
       </div>
     </body>
   `
+
+  function flashDBError() {
+    if (state.databaseError) {
+      return html`
+        <div class="alert alert-danger">
+          <strong>Database Error!</strong> Something went wrong on our end. :(
+        </div>
+      `
+    }
+    return ''
+  }
 }

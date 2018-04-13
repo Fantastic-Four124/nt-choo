@@ -4,6 +4,18 @@ module.exports = function authStore (state, emitter) {
   state.mainUser = null
   state.loggedIn = false
   state.token = null
+  state.invalidLogin = false
+  state.databaseError = false
+
+  emitter.on('pushState', () => {
+    state.invalidLogin = false
+    state.databaseError = false
+  })
+
+  emitter.on('popState', () => {
+    state.invalidLogin = false
+    state.databaseError = false
+  })
 
   state.register = (body) => {
     const registerURL = getRegisterURL()
@@ -14,14 +26,21 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
-      console.log('resObj', resObj)
-      localStorage.setItem('mainUser', JSON.stringify(resObj.user))
-      localStorage.setItem('token', JSON.stringify(resObj.token))
-      state.token = resObj.token
-      state.mainUser = resObj.user
-      state.loggedIn = true
-      emitter.emit('pushState', '/')
-    })}).catch(err => console.log('oh no!'))
+      if (resObj.err) {
+        state.databaseError = true
+        emitter.emit('render')
+      } else {
+        localStorage.setItem('mainUser', JSON.stringify(resObj.user))
+        localStorage.setItem('token', JSON.stringify(resObj.token))
+        state.token = resObj.token
+        state.mainUser = resObj.user
+        state.loggedIn = true
+        emitter.emit('pushState', '/')
+      }
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.login = (body) => {
@@ -33,15 +52,22 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
-      console.log('resObj', resObj)
-      localStorage.setItem('mainUser', JSON.stringify(resObj.user))
-      localStorage.setItem('token', JSON.stringify(resObj.token))
-      state.mainUser = resObj.user
-      state.token = resObj.token
-      state.loggedIn = true
-      console.log('state after login', state)
-      emitter.emit('pushState', '/')
-    })}).catch(err => console.log('oh no!'))
+      if (resObj.err) {
+        state.invalidLogin = true
+        emitter.emit('render')
+      } else {
+        localStorage.setItem('mainUser', JSON.stringify(resObj.user))
+        localStorage.setItem('token', JSON.stringify(resObj.token))
+        state.mainUser = resObj.user
+        state.token = resObj.token
+        state.loggedIn = true
+        state.invalidLogin = false
+        emitter.emit('pushState', '/')
+      }
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.logout = () => {
@@ -50,7 +76,6 @@ module.exports = function authStore (state, emitter) {
     state.loggedIn = false
     state.token = null
     state.mainUser = null
-    console.log('state after logging out', state)
     emitter.emit('pushState', '/')
   }
 }

@@ -11,6 +11,7 @@ module.exports = function register (state, emit) {
       <div class="main-container">
         ${renderNavbar(state, emit)}
         <h2>Register for nanoTwitter</h2>
+        ${flashDBError()}
         <form id="register" onsubmit=${onsubmit}>
           <label for="username">
             Username
@@ -44,6 +45,17 @@ module.exports = function register (state, emit) {
       </div>
     </body>
   `
+
+  function flashDBError() {
+    if (state.databaseError) {
+      return html`
+        <div class="alert alert-danger">
+          <strong>Database Error!</strong> Something went wrong on our end. :(
+        </div>
+      `
+    }
+    return ''
+  }
 
   function onsubmit (e) {                                              // 2.
     e.preventDefault()                                                 // 3.

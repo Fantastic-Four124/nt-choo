@@ -10,6 +10,8 @@ module.exports = function login (state, emit) {
     <body>
       <div class="main-container">
         ${renderNavbar(state, emit)}
+        ${flashLoginError()}
+        ${flashDBError()}
         <h2>Log in to nanoTwitter</h2>
         <form id="login" onsubmit=${onsubmit}>
           <label for="username">
@@ -34,6 +36,28 @@ module.exports = function login (state, emit) {
       </div>
     </body>
   `
+
+  function flashLoginError() {
+    if (state.invalidLogin) {
+      return html`
+        <div class="alert alert-danger">
+          <strong>Invalid Login!</strong> Wrong username or password
+        </div>
+      `
+    }
+    return ''
+  }
+
+  function flashDBError() {
+    if (state.databaseError) {
+      return html`
+        <div class="alert alert-danger">
+          <strong>Database Error!</strong> Something went wrong on our end. :(
+        </div>
+      `
+    }
+    return ''
+  }
 
   function onsubmit (e) {                                              // 2.
     e.preventDefault()                                                 // 3.
