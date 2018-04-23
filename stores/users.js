@@ -37,7 +37,10 @@ module.exports = function userStore (state, emitter) {
         state.currUser = user
         state.userLoaded = true
         emitter.emit('render')
-      })}).catch(err => console.log('oh no!'))
+      })}).catch(err => {
+        state.databaseError = true
+        emitter.emit('render')
+      })
     } else {
       if (state.loggedIn) {
         state.currUser = state.mainUser
@@ -68,7 +71,10 @@ module.exports = function userStore (state, emitter) {
     .then(userList => {
       state.userList = userList
       emitter.emit('render')
-    })}).catch(err => console.log('oh no!'))
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.toggleFollow = (otherUser) => {
@@ -80,7 +86,10 @@ module.exports = function userStore (state, emitter) {
       res.json()
     .then(resObj => {
       emitter.emit('render')
-    })}).catch(err => console.log('oh no!'))
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.localToggle = (otherUser) => {
@@ -89,16 +98,21 @@ module.exports = function userStore (state, emitter) {
     if (!isFollowing(state.mainUser, otherUser)) {
       toggleURL = getFollowURL(otherUser.id, token)
       state.mainUser.leaders.push(otherUser.id)
-      otherUser.followers.push(state.mainUser.id)
+      state.mainUser.number_of_leaders++
+      state.currUser.number_of_followers++
+      //      otherUser.followers.push(state.mainUser.id)
       localStorage.setItem('mainUser', JSON.stringify(state.mainUser))
     } else {
       toggleURL = getUnfollowURL(otherUser.id, token)
       state.mainUser.leaders = state.mainUser.leaders.filter(l => {
         return l !== otherUser.id
       })
-      otherUser.followers = otherUser.followers.filter(f => {
-        return f !== state.mainUser.id
-      })
+
+      state.mainUser.number_of_leaders--
+      state.currUser.number_of_followers--
+      // otherUser.followers = otherUser.followers.filter(f => {
+      //   return f !== state.mainUser.id
+      // })
       localStorage.setItem('mainUser', JSON.stringify(state.mainUser))
     }
     return toggleURL

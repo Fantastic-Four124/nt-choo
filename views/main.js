@@ -5,7 +5,7 @@ const renderProfile = require('../com/profile')
 const renderTweetbar = require('../com/tweetbar')
 
 
-const TITLE = 'test - main'
+const TITLE = 'nanoTwitter'
 
 module.exports = function main (state, emit) {
   const mainUser = localStorage.getItem('mainUser')
@@ -25,6 +25,7 @@ module.exports = function main (state, emit) {
       state.loadTweets()
     }
   }
+  console.log('state tweets', state.tweets)
  
   return html`
     <body>

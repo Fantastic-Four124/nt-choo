@@ -5,7 +5,6 @@ var html = require('choo/html')
 css('tachyons')
 css('./public/styles.css')
 css('bootstrap')
-//css('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
 
 var app = choo()
 if (process.env.NODE_ENV !== 'production') {

@@ -1,4 +1,4 @@
-const {getRegisterURL, getLoginURL} = require('../util')
+const {getRegisterURL, getLoginURL, getLogoutURL} = require('../util')
 
 module.exports = function authStore (state, emitter) {
   state.mainUser = null
@@ -26,7 +26,6 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
-      console.log('resObj in register', resObj)
       if (resObj.err) {
         state.databaseError = true
         emitter.emit('render')
@@ -53,7 +52,6 @@ module.exports = function authStore (state, emitter) {
     .then(res => {
       res.json()
     .then(resObj => {
-      console.log('resObj in login', resObj)
       if (resObj.err) {
         state.invalidLogin = true
         emitter.emit('render')
@@ -73,11 +71,21 @@ module.exports = function authStore (state, emitter) {
   }
 
   state.logout = () => {
-    localStorage.removeItem('mainUser')
-    localStorage.removeItem('token')
-    state.loggedIn = false
-    state.token = null
-    state.mainUser = null
-    emitter.emit('pushState', '/')
+    const logoutURL = getLogoutURL(state.token)
+
+    fetch(logoutURL, {method: 'POST', headers: {Accept: 'application/json'}})
+    .then(res => {
+      res.json()
+    .then(resJSON => {
+      localStorage.removeItem('mainUser')
+      localStorage.removeItem('token')
+      state.loggedIn = false
+      state.token = null
+      state.mainUser = null
+      emitter.emit('pushState', '/')
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 }

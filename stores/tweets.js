@@ -1,5 +1,4 @@
 const {getTimelineURL, getFeedURL, getPostTweetURL, getRecentTweetsURL} = require('../util')
-const $ = require('jquery')
 
 module.exports = function feedStore (state, emitter) {
   state.tweets = null
@@ -7,14 +6,15 @@ module.exports = function feedStore (state, emitter) {
 
   emitter.on('pushState', () => {
     state.tweets = null
+    state.databaseError = false
   })
 
   emitter.on('popState', () => {
     state.tweets = null
+    state.databaseError = false
   })
 
   state.loadAllTweets = () => {
-    console.log('state in loadall', state)
     if (!state.appLoaded) {
       emitter.on('DOMContentLoaded', () => {
         state.appLoaded = true
@@ -31,43 +31,17 @@ module.exports = function feedStore (state, emitter) {
     .then(res => {
       res.json()
     .then(tweets => {
-      state.tweets = tweets
-      emitter.emit('render')
-      //     state.renderHashtags()
-    })}).catch(err => console.log('oh no!'))
-  }
-
-  state.renderHashtags = () => {
-    $(document).ready(() => {
-      $('.content').each(function() {
-        const me = $(this)
-        console.log('me', me)
-        let txt = me.html()
-        var re = [
-          "\\b((?:https?|ftp)://[^\\s\"'<>]+)\\b",
-          "\\b(www\\.[^\\s\"'<>]+)\\b",
-          "\\b(\\w[\\w.+-]*@[\\w.-]+\\.[a-z]{2,6})\\b", 
-          "#([a-z0-9]+)"];
-        re = new RegExp(re.join('|'), "gi");
-        ///(#([a-z0-9]+))(?!.*?<\/a>)/gi, '<a href="''">$1</a>');
-
-        //txt = txt.replace(/(#([a-z0-9]+)), '<a href="''">$1</a>');
-
-        txt = txt.replace(re, (match, url, www, mail, hashtag) => {
-          if(url)
-            return "<a href=\"" + url + "\">" + url + "</a>";
-          if(www)
-            return "<a href=\"http://" + www + "\">" + www + "</a>";
-          if(mail)
-            return "<a href=\"mailto:" + mail + "\">" + mail + "</a>"
-          if(hashtag)
-            console.log('hashtag found', hashtag)
-            return '<a href="http://' + hashtag + '">' + hashtag + '</a>'
-          return match;
-        })
-        console.log('txt', txt)
-        me.html(txt);
+      console.log(tweets)
+      let stateTweets = []
+      tweets.forEach(t => {
+        stateTweets.push(JSON.parse(t))
       })
+      console.log('stateTweets', stateTweets)
+      state.tweets = stateTweets
+      emitter.emit('render')
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
     })
   }
 
@@ -77,12 +51,17 @@ module.exports = function feedStore (state, emitter) {
     .then(res => {
       res.json()
     .then(tweets => {
-      state.tweets = tweets
+      let stateTweets = []
+      tweets.forEach(t => {
+        stateTweets.push(JSON.parse(t))
+      })
+      state.tweets = stateTweets
       console.log('tweets', tweets)
-      //  state.renderHashtags()
       emitter.emit('render')
-      // state.renderHashtags()
-    })}).catch(err => console.log('oh no!'))
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.tweet = (body) => {
@@ -92,7 +71,10 @@ module.exports = function feedStore (state, emitter) {
       res.json()
     .then(resJSON => {
       emitter.emit('pushState', '/users/' + state.mainUser.id)
-    })}).catch(err => console.log('oh no!'))
+    })}).catch(err => {
+      state.databaseError = true
+      emitter.emit('render')
+    })
   }
 
   state.getTweetURL = () => {

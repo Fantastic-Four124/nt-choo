@@ -1,54 +1,52 @@
 const html = require('choo/html')
 const {getViewUserURL, niceDate, pluralize} = require('../util')
-const $ = require('jquery')
 
 module.exports = function renderTweet (state, emit, tweet) {
+  console.log('tweet', tweet)
   return html`
     <div class="tweet">
       <div class="tweet-content">
         <div class="post-container">
           <div class="metadata">
-            <a href=${getViewUserURL(tweet.user)} class="name"><span>${tweet.user.username}</span></a>
-            <span class="date"> - ${niceDate(tweet.createdAt)}</span>
+            <a href=${getViewUserURL(tweet.user)} class="name"><span>@${tweet.user.username}</span></a>
+            <span class="date"> - ${niceDate(tweet.date_posted)}</span>
           </div>
-          <p class="content">${tweet.message}</p>
+          <p class="content">${linkify(tweet.contents)}</p>
         </div>
       </div>
     </div>
   `
 
-  function linkify(str){
-    var re = [
-      "\\b((?:https?|ftp)://[^\\s\"'<>]+)\\b",
-      "\\b(www\\.[^\\s\"'<>]+)\\b",
-      "\\b(\\w[\\w.+-]*@[\\w.-]+\\.[a-z]{2,6})\\b", 
-      "#([a-z0-9]+)"];
-    re = new RegExp(re.join('|'), "gi");
 
-    const res = str.replace(re, (match, url, www, mail, hashtag) => {
-      if(url)
-        return "<a href=\"" + url + "\">" + url + "</a>";
-      if(www)
-        return "<a href=\"http://" + www + "\">" + www + "</a>";
-      if(mail)
-        return "<a href=\"mailto:" + mail + "\">" + mail + "</a>";
-      if(hashtag)
-        return "<a href=\"http://" + hashtag + "\">" + hashtag + "</a>";
-        //return html`<a href="hashtag/${twitler}">#${twitler}</a>`;
-      return match;
+  // <!-- <p class="content">${linkify(tweet.contents)}</p> -->
+  function linkify(str){
+    let isHashtag = false
+    let isMention = false
+
+    //    str = str.replace(/#/gi. '*#')
+    //    str = str.replace(/@/gi. '*@')
+    let arr = str.split(" ").map(w => {
+      if (w.match(/#([a-zA-Z]+)/)) {
+        isHashtag = true
+        const link = w.substring(1)
+        return html`
+          <a href="/hashtag/${link}">${w + ' '}</a>
+        `
+      }
+      if (w.match(/@([a-zA-Z]+)/)) {
+        isMention = true
+        const link = w.substring(1)
+        return html`
+          <a href="/mentions/${link}">${w + ' '}</a>
+        `
+      }
+      return w + " "
     })
 
-    return res
+    if (isHashtag) {
+    console.log('arr', arr)
 
-    console.log('1',res)
-    const resChoo = html`<div>${res}</div>`
-
-    //    const htmhell = html`<p class="content">${resChoo}</p>`
-    console.log('2',resChoo)
-    //    return html`
-    //      <p class="content">resChoo</p>
-    //    `
+    }
+    return arr
   }
 }
-
-
